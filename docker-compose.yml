@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # ============================================
+  # 1. MongoDB — Persistencia de documentos
+  # ============================================
+  mongodb:
+    image: mongo:7.0
+    container_name: utm_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: utm_password
+      MONGO_INITDB_DATABASE: utm_drones
+    volumes:
+      - mongo_data:/data/db
+      - ./data/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - utm_network
+
+  # ============================================
+  # 2. Redis — Tiempo real, caché, Pub/Sub
+  # ============================================
+  redis:
+    image: redis:7.2-alpine
+    container_name: utm_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./data/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - utm_network
+
+  # ============================================
+  # 3. Backend FastAPI
+  # ============================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: utm_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # MongoDB
+      MONGODB_URL: mongodb://admin:utm_password@mongodb:27017/utm_drones?authSource=admin
+      MONGODB_DB_NAME: utm_drones
+      
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      
+      # App
+      APP_ENV: development
+      LOG_LEVEL: info
+    volumes:
+      - ./backend:/app  # Hot reload en desarrollo
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - utm_network
+
+  # ============================================
+  # 4. Frontend (servido por nginx o directo)
+  # ============================================
+  frontend:
+    image: nginx:alpine
+    container_name: utm_frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./data/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    networks:
+      - utm_network
+
+volumes:
+  mongo_data:
+  redis_data:
+
+networks:
+  utm_network:
+    driver: bridge
