@@ -13,7 +13,8 @@ from .api.routes import (
     zonas_router,
     dashboard_router,
 )
-from .api.websocket.events import websocket_router, iniciar_reenvio_pubsub
+from .api.websocket import websocket_router
+from .api.websocket.events import iniciar_reenvio_pubsub
 from .infrastructure.persistence.mongodb_repo import (
     MongoDBConnection,
     DronRepository,

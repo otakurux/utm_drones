@@ -644,9 +644,8 @@ class EventoAuditoriaRepository(BaseRepository):
     def collection(self):
         return self.db.eventos_auditoria
     
-    async def guardar_evento(self, evento: DominioEvent) -> None:
-        """Persiste un evento de dominio para auditoría."""
-        document = {
+    def _to_document(self, evento):
+        return {
             "_id": str(uuid4()),
             "event_id": str(evento.event_id),
             "timestamp": evento.timestamp,
@@ -654,36 +653,34 @@ class EventoAuditoriaRepository(BaseRepository):
             "aggregate_id": str(evento.aggregate_id) if evento.aggregate_id else None,
             "payload": evento.to_dict(),
         }
+    
+    def _from_document(self, doc):
+        # No se necesita reconstruir eventos desde MongoDB para lectura
+        return doc
+    
+    async def guardar_evento(self, evento):
+        """Persiste un evento de dominio para auditoría."""
+        document = self._to_document(evento)
         await self.collection.insert_one(document)
     
-    async def listar_por_aggregate(
-        self,
-        aggregate_id: UUID,
-        skip: int = 0,
-        limit: int = 100,
-    ) -> List[dict]:
+    async def listar_por_aggregate(self, aggregate_id, skip=0, limit=100):
         """Lista eventos de un aggregate específico."""
         cursor = self.collection.find(
             {"aggregate_id": str(aggregate_id)}
-        ).sort("timestamp", DESCENDING).skip(skip).limit(limit)
+        ).sort("timestamp", -1).skip(skip).limit(limit)
         return [doc async for doc in cursor]
     
-    async def listar_por_tipo(
-        self,
-        tipo_evento: str,
-        skip: int = 0,
-        limit: int = 100,
-    ) -> List[dict]:
+    async def listar_por_tipo(self, tipo_evento, skip=0, limit=100):
         """Lista eventos por tipo."""
         cursor = self.collection.find(
             {"tipo": tipo_evento}
-        ).sort("timestamp", DESCENDING).skip(skip).limit(limit)
+        ).sort("timestamp", -1).skip(skip).limit(limit)
         return [doc async for doc in cursor]
     
-    async def listar_recientes(self, minutos: int = 60) -> List[dict]:
+    async def listar_recientes(self, minutos=60):
         """Lista eventos recientes."""
         desde = datetime.utcnow() - __import__('datetime').timedelta(minutes=minutos)
         cursor = self.collection.find(
             {"timestamp": {"$gte": desde}}
-        ).sort("timestamp", DESCENDING)
+        ).sort("timestamp", -1)
         return [doc async for doc in cursor]
