@@ -1,1 +1,826 @@
-null 
+/* ============================================================
+   VARIABLES Y RESET
+   ============================================================ */
+:root {
+    --color-primary: #2563eb;
+    --color-primary-dark: #1d4ed8;
+    --color-secondary: #64748b;
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+    --color-info: #06b6d4;
+    
+    --bg-dark: #0f172a;
+    --bg-panel: #1e293b;
+    --bg-panel-hover: #334155;
+    --bg-input: #334155;
+    
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    
+    --border-color: #334155;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    
+    --transition: all 0.2s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* ============================================================
+   BARRA SUPERIOR
+   ============================================================ */
+.top-bar {
+    height: 60px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 1000;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo i {
+    font-size: 28px;
+    color: var(--color-primary);
+}
+
+.logo h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.status-indicators {
+    display: flex;
+    gap: 20px;
+}
+
+.indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-danger);
+    transition: var(--transition);
+}
+
+.dot.online {
+    background: var(--color-success);
+    box-shadow: 0 0 8px var(--color-success);
+}
+
+.dot.offline {
+    background: var(--color-danger);
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* ============================================================
+   BOTONES
+   ============================================================ */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-dark);
+}
+
+.btn-danger {
+    background: var(--color-danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+.btn-warning {
+    background: var(--color-warning);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--bg-panel-hover);
+    color: var(--text-primary);
+}
+
+.btn-small {
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
+/* ============================================================
+   LAYOUT PRINCIPAL
+   ============================================================ */
+.main-layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    grid-template-rows: 1fr 200px;
+    height: calc(100vh - 60px);
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.panel {
+    background: var(--bg-dark);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.panel-header i {
+    color: var(--color-primary);
+}
+
+.badge {
+    margin-left: auto;
+    background: var(--color-primary);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.badge-danger {
+    background: var(--color-danger);
+}
+
+.panel-body {
+    padding: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* ============================================================
+   RESUMEN DE FLOTA
+   ============================================================ */
+.fleet-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-md);
+}
+
+.stat-value {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.stat-value.disponible { color: var(--color-success); }
+.stat-value.en-vuelo { color: var(--color-primary); }
+.stat-value.mantenimiento { color: var(--color-warning); }
+
+.stat-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+   LISTAS
+   ============================================================ */
+.drone-list, .delivery-list, .alert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.drone-item, .delivery-item, .alert-item {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    border-left: 3px solid transparent;
+}
+
+.drone-item:hover, .delivery-item:hover {
+    background: var(--bg-panel-hover);
+}
+
+.drone-item.active {
+    border-left-color: var(--color-primary);
+    background: rgba(37, 99, 235, 0.1);
+}
+
+.drone-item.conflicto {
+    border-left-color: var(--color-danger);
+    animation: pulse-danger 2s infinite;
+}
+
+@keyframes pulse-danger {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.drone-header, .delivery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.drone-id, .delivery-id {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.drone-status, .delivery-status {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.status-disponible { background: rgba(16, 185, 129, 0.2); color: var(--color-success); }
+.status-en-vuelo { background: rgba(37, 99, 235, 0.2); color: var(--color-primary); }
+.status-cargando { background: rgba(245, 158, 11, 0.2); color: var(--color-warning); }
+.status-mantenimiento { background: rgba(239, 68, 68, 0.2); color: var(--color-danger); }
+
+.drone-info, .delivery-info {
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 12px;
+}
+
+.battery-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.battery-bar-mini {
+    width: 30px;
+    height: 6px;
+    background: var(--bg-panel-hover);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.battery-level-mini {
+    height: 100%;
+    border-radius: 3px;
+    transition: var(--transition);
+}
+
+/* ============================================================
+   FILTROS DE ENTREGAS
+   ============================================================ */
+.delivery-filters {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.filter-btn {
+    padding: 4px 12px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.filter-btn.active, .filter-btn:hover {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.priority-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.priority-10 { background: var(--color-danger); color: white; }
+.priority-7 { background: var(--color-warning); color: white; }
+.priority-5 { background: var(--color-info); color: white; }
+.priority-1 { background: var(--text-secondary); color: white; }
+
+/* ============================================================
+   ALERTAS
+   ============================================================ */
+.panel-alerts .panel-body {
+    max-height: 200px;
+}
+
+.alert-item {
+    border-left: 3px solid var(--color-warning);
+}
+
+.alert-item.critica {
+    border-left-color: var(--color-danger);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.alert-severity {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.alert-message {
+    font-size: 12px;
+    color: var(--text-primary);
+}
+
+.alert-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* ============================================================
+   MAPA
+   ============================================================ */
+.map-container {
+    position: relative;
+    background: #0a0f1d;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Popup de dron */
+.drone-info-popup {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    z-index: 500;
+    overflow: hidden;
+}
+
+.popup-header {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popup-header h4 {
+    font-size: 16px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.popup-body {
+    padding: 16px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.info-label {
+    color: var(--text-secondary);
+}
+
+.info-value {
+    font-weight: 500;
+}
+
+.battery-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 120px;
+}
+
+.battery-level {
+    flex: 1;
+    height: 8px;
+    background: linear-gradient(90deg, var(--color-danger) 0%, var(--color-warning) 50%, var(--color-success) 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.popup-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Leyenda */
+.map-legend {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+    z-index: 500;
+    min-width: 160px;
+}
+
+.map-legend h4 {
+    font-size: 12px;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 12px;
+}
+
+.legend-icon {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.drone-disponible { background: var(--color-success); }
+.drone-en-vuelo { background: var(--color-primary); }
+.drone-mantenimiento { background: var(--color-warning); }
+.drone-conflicto { background: var(--color-danger); animation: pulse 1.5s infinite; }
+.zona-restringida { background: rgba(239, 68, 68, 0.3); border: 1px solid var(--color-danger); }
+.ruta-medicina { background: var(--color-danger); height: 3px; border-radius: 0; }
+.ruta-general { background: var(--color-secondary); height: 3px; border-radius: 0; }
+
+/* Controles de capas */
+.layer-controls {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.layer-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.layer-toggle input {
+    accent-color: var(--color-primary);
+}
+
+/* ============================================================
+   PANEL INFERIOR DE EVENTOS
+   ============================================================ */
+.bottom-panel {
+    grid-column: 1 / -1;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    transition: height 0.3s ease;
+}
+
+.bottom-panel.collapsed {
+    height: 40px;
+}
+
+.bottom-panel .panel-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px 16px;
+}
+
+.bottom-panel .panel-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.event-log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 16px;
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+}
+
+.event-item {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    gap: 12px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.event-time {
+    color: var(--color-info);
+    min-width: 80px;
+}
+
+.event-type {
+    min-width: 120px;
+    font-weight: 600;
+}
+
+.event-type.posicion { color: var(--color-primary); }
+.event-type.alerta { color: var(--color-danger); }
+.event-type.despego { color: var(--color-success); }
+.event-type.entrega { color: var(--color-warning); }
+
+.event-data {
+    color: var(--text-secondary);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ============================================================
+   MODALES
+   ============================================================ */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Formularios */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* ============================================================
+   ESTILOS LEAFLET CUSTOM
+   ============================================================ */
+.leaflet-container {
+    background: #0a0f1d !important;
+}
+
+.leaflet-popup-content-wrapper {
+    background: var(--bg-panel);
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.leaflet-popup-tip {
+    background: var(--bg-panel);
+}
+
+.leaflet-control-zoom a {
+    background: var(--bg-panel) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background: var(--bg-panel-hover) !important;
+}
+
+/* Iconos de drones personalizados */
+.drone-icon {
+    transition: all 0.3s ease;
+}
+
+.drone-icon:hover {
+    transform: scale(1.2);
+}
+
+/* Animación de trayectoria */
+.ruta-animada {
+    stroke-dasharray: 10;
+    animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+    to { stroke-dashoffset: -20; }
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+    .main-layout {
+        grid-template-columns: 280px 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr 150px;
+    }
+    
+    .sidebar {
+        max-height: 200px;
+    }
+}
