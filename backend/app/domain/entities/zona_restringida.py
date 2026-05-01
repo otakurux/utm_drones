@@ -1,7 +1,7 @@
 """zona_restringida""" 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from uuid import UUID, uuid4
 
 from ..enums.estados import TipoZona
